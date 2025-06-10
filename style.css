@@ -1,26 +1,55 @@
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
-  background: #e3e8ed;
+  background: #f4f6f8;
+}
+
+h1 {
+  text-align: center;
 }
 
 .user-container {
   display: flex;
   gap: 20px;
+  justify-content: center;
 }
 
 .user-card {
   background: white;
   padding: 15px;
+  border: 1px solid #ccc;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
   width: 250px;
+  text-align: center;
 }
 
 .user-card img {
-  width: 100%;
+  width: 70%;
   border-radius: 50%;
 }
 
-.buttons {
-  margin-bottom: 20px;
+.weather-info {
+  position: relative;
+  padding-top: 5px; 
+  border-top: 1px solid #ccc;
+}
+
+#buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+#buttons button {
+  background-color: #1b77e0; 
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
