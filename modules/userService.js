@@ -1,45 +1,32 @@
-import { CACHE_KEY, CACHE_EXPIRY_MS } from "../utils/constants.js";
+import { RANDOM_USER_API_URL, CACHE_KEY, CACHE_EXPIRY_MS, USER_COUNT } from "../utils/constants.js";
 import { getCoordinates } from "./geoService.js";
 import { getWeather } from "./weatherService.js";
 
 let currentUsers = [];
 
-export async function loadUsers(forceRefresh = false) {
-  const cached = localStorage.getItem(CACHE_KEY);
-  const now = Date.now();
-
-  if (!forceRefresh && cached) {
-    const { timestamp, users } = JSON.parse(cached);
-    if (now - timestamp < CACHE_EXPIRY_MS) {
-      console.log("Loaded users from localStorage");
-      currentUsers = users;
-      return users;
-    }
-  }
-
+export async function loadNewUsers() {
   try {
-    const response = await fetch("https://randomuser.me/api/?results=5");
+    const response = await fetch(`${RANDOM_USER_API_URL}?results=${USER_COUNT}`);
     if (!response.ok) throw new Error("Failed to fetch users");
     const data = await response.json();
     const users = data.results;
 
     for (const user of users) {
-      const coords = await getCoordinates(
-        user.location.city,
-        user.location.country
-      );
+      const coordinates = await getCoordinates(user.location.city, user.location.country);
 
       let weatherInfo = {
         temperature: "-",
         humidity: "-",
         condition: "Unknown",
       };
-      if (coords) {
-        const weather = await getWeather(coords.lat, coords.lng);
+
+      if (coordinates) {
+        const weather = await getWeather(coordinates.lat, coordinates.lng);
         if (weather) {
           weatherInfo = weather;
         }
       }
+      
       user.weatherInfo = weatherInfo;
     }
 
@@ -48,7 +35,7 @@ export async function loadUsers(forceRefresh = false) {
     localStorage.setItem(
       CACHE_KEY,
       JSON.stringify({
-        timestamp: now,
+        timestamp: Date.now(),
         users,
       })
     );
@@ -58,6 +45,22 @@ export async function loadUsers(forceRefresh = false) {
     console.error("Error fetching users:", error);
     throw error;
   }
+}
+
+export async function loadUsers() {
+  const cached = localStorage.getItem(CACHE_KEY);
+  const now = Date.now();
+
+  if (cached) {
+    const { timestamp, users } = JSON.parse(cached);
+    if (now - timestamp < CACHE_EXPIRY_MS) {
+      console.log("Loaded users from localStorage");
+      currentUsers = users;
+      return users;
+    }
+  }
+
+  return await loadNewUsers();
 }
 
 export function getCurrentUsers() {

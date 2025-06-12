@@ -1,8 +1,9 @@
-import { OPENCAGE_API_KEY } from "../utils/constants.js";
+import { OPENCAGE_API_URL, OPENCAGE_API_KEY } from "../utils/constants.js";
 import { fetchWithRetry } from "../utils/fetchWithRetry.js";
 
 export async function getCoordinates(city, country) {
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city + ", " + country)}&key=${OPENCAGE_API_KEY}&limit=1`;
+  const query = `${city}, ${country}`;
+  const url = `${OPENCAGE_API_URL}?q=${encodeURIComponent(query)}&key=${OPENCAGE_API_KEY}&limit=1`;
 
   try {
     const response = await fetchWithRetry(url);
