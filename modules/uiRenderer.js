@@ -1,6 +1,5 @@
 import { getCoordinates } from "./geoService.js";
 import { getWeather } from "./weatherService.js";
-import { CACHE_KEY, WEATHER_REFRESH_DELAY_MS } from "../utils/constants.js";
 
 export function renderUsers(users) {
   const container = document.getElementById("userContainer");
@@ -37,17 +36,8 @@ export function renderUsers(users) {
   });
 }
 
-export async function refreshWeather(users) {
+export async function refreshWeather(users = []) {
   const cards = document.querySelectorAll(".user-card");
-
-  cards.forEach(card => {
-    const weatherInfo = card.querySelector(".weather-info");
-    if (weatherInfo) {
-      weatherInfo.innerText = "Refreshing...";
-    }
-  });
-
-  await new Promise(resolve => setTimeout(resolve, WEATHER_REFRESH_DELAY_MS));
 
   const weatherPromises = users.map(async (user, i) => {
     const coordinates = await getCoordinates(user.location.city, user.location.country);
@@ -64,17 +54,9 @@ export async function refreshWeather(users) {
       `;
       user.weatherInfo = weather;
     } else {
-      weatherInfo.innerText = "Weather unavailable";
+      weatherInfo.innerText = "Weather unavailable!";
     }
   });
 
   await Promise.all(weatherPromises);
-
-  localStorage.setItem(
-    CACHE_KEY,
-    JSON.stringify({
-      timestamp: Date.now(),
-      users: users,
-    })
-  );
 }

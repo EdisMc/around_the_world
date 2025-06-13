@@ -1,4 +1,4 @@
-import { OPENCAGE_API_URL, OPENCAGE_API_KEY } from "../utils/constants.js";
+import { OPENCAGE_API_URL, OPENCAGE_API_KEY } from "../constants.js";
 import { fetchWithRetry } from "../utils/fetchWithRetry.js";
 
 export async function getCoordinates(city, country) {
@@ -9,10 +9,10 @@ export async function getCoordinates(city, country) {
     const response = await fetchWithRetry(url);
     const data = await response.json();
 
-    if (data.results && data.results.length > 0) {
+    if (data.results.length) {
+      const { lat, lng } = data.results[0].geometry;
       return {
-        lat: data.results[0].geometry.lat,
-        lng: data.results[0].geometry.lng,
+        lat , lng,
       };
     }
     return null;

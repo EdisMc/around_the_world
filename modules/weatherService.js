@@ -1,4 +1,4 @@
-import { OPEN_METEO_API_URL, weatherCodeMap } from "../utils/constants.js";
+import { OPEN_METEO_API_URL, weatherCodeMap } from "../constants.js";
 import { fetchWithRetry } from "../utils/fetchWithRetry.js";
 
 export async function getWeather(lat, lng) {

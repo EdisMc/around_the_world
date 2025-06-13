@@ -1,43 +1,39 @@
-import { loadUsers, loadNewUsers, getCurrentUsers } from "./modules/userService.js";
+import { loadUsers, refreshUsers } from "./modules/userService.js";
 import { renderUsers, refreshWeather } from "./modules/uiRenderer.js";
-import { AUTO_REFRESH_INTERVAL_MS } from "./utils/constants.js";
-
-let users = [];
+import { AUTO_REFRESH_INTERVAL_MS, USERS_CACHE_KEY } from "./constants.js";
+import { getFromCache } from "./utils/cache.js";
 
 async function init() {
   try {
-    users = await loadUsers();
+    const users = await loadUsers();
     renderUsers(users);
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error loading users:", error);
+  }
+}
+
+async function tryRefreshWeather() {
+  try {
+    const cached = getFromCache(USERS_CACHE_KEY);
+    if (cached?.users) {
+      await refreshWeather(cached.users);
+    }
+  } catch (error) {
+    console.error("Error refreshing weather:", error);
   }
 }
 
 document.getElementById("newUsersBtn").addEventListener("click", async () => {
   try {
-    users = await loadNewUsers();
+    const users = await refreshUsers();
     renderUsers(users);
   } catch (error) {
-    console.error("Error fetching new users:", error);
+    console.error("Error refreshing users:", error);
   }
 });
 
-document.getElementById("refreshBtn").addEventListener("click", async () => {
-  try {
-    const currentUsers = getCurrentUsers();
-    await refreshWeather(currentUsers);
-  } catch (error) {
-    console.error("Error refreshing weather:", error);
-  }
-});
+document.getElementById("refreshBtn").addEventListener("click", tryRefreshWeather);
 
 init().then(() => {
-  setInterval(async () => {
-    try {
-      const currentUsers = getCurrentUsers();
-      await refreshWeather(currentUsers);
-    } catch (error) {
-      console.error("Error auto-refreshing weather:", error);
-    }
-  }, AUTO_REFRESH_INTERVAL_MS);
+  setInterval(tryRefreshWeather, AUTO_REFRESH_INTERVAL_MS);
 });

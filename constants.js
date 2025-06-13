@@ -1,13 +1,10 @@
-export const RANDOM_USER_API_URL = "https://randomuser.me/api/";
+export const RANDOM_USER_API_URL = "https://randomuser.me/api/?results=5";
 export const OPENCAGE_API_URL = "https://api.opencagedata.com/geocode/v1/json";
 export const OPEN_METEO_API_URL = "https://api.open-meteo.com/v1/forecast";
-
 export const OPENCAGE_API_KEY = "af4f4b565d4f44edbd8e22fdd711d6cc";
 
-export const CACHE_KEY = "cachedUsers";
+export const USERS_CACHE_KEY = "cachedUsers";
 export const CACHE_EXPIRY_MS = 60 * 60 * 1000;
-export const USER_COUNT = 5;
-export const WEATHER_REFRESH_DELAY_MS = 5000;
 export const AUTO_REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 
 export const weatherCodeMap = {
